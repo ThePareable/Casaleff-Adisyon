@@ -6,10 +6,8 @@
                 <h2>PIN ile Giriş</h2>
 
                 <!-- Görsel olmayan etiket (erişilebilirlik) -->
-                <label class="visually-hidden" for="pin-input">4 haneli PIN</label>
-
                 <input id="pin-input" class="pin-input" type="password" v-model="pin" maxlength="4" inputmode="numeric"
-                    pattern="[0-9]{4}" placeholder="••••" autocomplete="one-time-code" required
+                    pattern="[0-9]{4}" placeholder="4 haneli PIN" autocomplete="one-time-code" required
                     aria-describedby="pin-help" />
                 <small id="pin-help" class="text-muted">4 haneli PIN giriniz.</small>
 
