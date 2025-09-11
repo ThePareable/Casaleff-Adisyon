@@ -2,6 +2,11 @@
     <div class="page-wrapper">
         <div class="login-container">
             <div class="login-form">
+                <button class="back-btn" @click="$router.push('/welcome')" aria-label="Geri Dön">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15.5 7L9.5 14L15.5 21" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
                 <img src="../assets/logo.png" alt="Logo" class="login-logo" />
 
                 <div class="order-actions">
@@ -50,6 +55,7 @@ export default {
 }
 
 .login-form {
+    position: relative;
     width: 100%;
     max-width: 520px;
     /* Genişlik sınırı aynı */
@@ -98,6 +104,24 @@ export default {
 .login-btn:hover {
     background: var(--primary-dark);
     border-color: var(--primary-dark);
+}
+
+/* Geri butonu stili */
+.back-btn {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--primary);
+    z-index: 2;
+    transition: color 0.2s;
+}
+
+.back-btn:hover {
+    color: var(--primary-dark);
 }
 
 /* Tablet/desktop rötuş: LoginPage ile aynı */
