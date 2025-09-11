@@ -1,9 +1,21 @@
 <script setup>
+import { ref } from 'vue'
 import LoginPage from './components/LoginPage.vue'
+import WelcomePage from './components/WelcomePage.vue'
+
+const loggedIn = ref(false)
+
+function handleLoginSuccess() {
+  loggedIn.value = true
+}
+function handleWelcomeAction(action) {
+  // Burada ödeme/sipariş için yönlendirme yapılabilir
+  alert(action === 'odeme' ? 'Ödeme ekranı!' : 'Sipariş ekranı!')
+}
 </script>
 
 <template>
-  <LoginPage />
+  <router-view />
 </template>
 
 <style scoped>

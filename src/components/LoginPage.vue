@@ -3,7 +3,6 @@
         <div class="login-container">
             <form @submit.prevent="handleLogin" class="login-form" novalidate>
                 <img src="../assets/logo.png" alt="Logo" class="login-logo" />
-                <h2>PIN ile Giriş</h2>
 
                 <!-- Görsel olmayan etiket (erişilebilirlik) -->
                 <label class="visually-hidden" for="pin-input">4 haneli PIN</label>
@@ -11,14 +10,17 @@
                 <input id="pin-input" class="pin-input" type="password" v-model="pin" maxlength="4" inputmode="numeric"
                     pattern="[0-9]{4}" placeholder="••••" autocomplete="one-time-code" required
                     aria-describedby="pin-help" />
-                <small id="pin-help" class="text-muted">4 haneli PIN giriniz.</small>
-
                 <button type="submit" class="login-btn">Giriş Yap</button>
                 <p v-if="error" class="error-msg" role="alert">{{ error }}</p>
             </form>
         </div>
     </div>
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router'
+const router = useRouter()
+</script>
 
 <script>
 export default {
@@ -30,7 +32,7 @@ export default {
         handleLogin() {
             if (this.pin === '1234') {
                 this.error = '';
-                alert('Giriş başarılı!');
+                this.$router.push('/welcome');
             } else {
                 this.error = 'PIN yanlış, tekrar deneyin.';
             }
@@ -62,6 +64,7 @@ export default {
 }
 
 .login-container {
+    min-height: 50vh;
     width: 100%;
     display: grid;
 }
