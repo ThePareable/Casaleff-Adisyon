@@ -1,12 +1,16 @@
 <template>
     <div class="page-wrapper">
         <div class="login-container">
-            <div class="login-form welcome-form">
+            <div class="login-form">
                 <img src="../assets/logo.png" alt="Logo" class="login-logo" />
 
-                <div class="welcome-actions">
-                    <button class="login-btn" @click="$router.push('/order')">Sipariş Ver</button>
-                    <button class="login-btn" @click="$emit('action', 'odeme')">Ödeme Al</button>
+                <div class="order-actions">
+                    <button class="login-btn" @click="$emit('order-action', 'acik-masalar')">
+                        Açık Masalar
+                    </button>
+                    <button class="login-btn" @click="$emit('order-action', 'yeni-masa')">
+                        Yeni Masa Aç
+                    </button>
                 </div>
             </div>
         </div>
@@ -15,12 +19,12 @@
 
 <script>
 export default {
-    name: 'WelcomePage',
+    name: 'OrderPage',
 }
 </script>
 
 <style scoped>
-/* LoginPage ile birebir aynı layout kuralları */
+/* === LoginPage ile birebir aynı ortak kapsayıcılar === */
 *,
 *::before,
 *::after {
@@ -29,6 +33,7 @@ export default {
 
 .page-wrapper {
     min-height: 100dvh;
+    /* LoginPage ile aynı */
     display: grid;
     place-items: center;
     background: var(--background);
@@ -39,16 +44,18 @@ export default {
 
 .login-container {
     min-height: 50vh;
+    /* LoginPage’de var, birebir kopya */
     width: 100%;
     display: grid;
 }
 
-/* Kart ölçüleri/padding/kenarlıklar: LoginPage .login-form ile aynı */
 .login-form {
     width: 100%;
     max-width: 520px;
+    /* Genişlik sınırı aynı */
     margin-inline: auto;
     max-height: calc(100dvh - 32px);
+    /* Yükseklik davranışı aynı */
     overflow: auto;
 
     background: var(--surface);
@@ -61,7 +68,7 @@ export default {
     gap: clamp(12px, 2.6vw, 16px);
 }
 
-/* Logo boyutu ve boşlukları birebir */
+/* Logo: LoginPage ile aynı */
 .login-logo {
     display: block;
     margin: 0 auto clamp(14px, 3vw, 24px) auto;
@@ -69,18 +76,8 @@ export default {
     height: auto;
 }
 
-/* Başlık stili birebir */
-.login-form h2 {
-    margin: 0 0 clamp(8px, 1.8vw, 12px) 0;
-    font-weight: 700;
-    letter-spacing: .02em;
-    color: var(--text-main);
-    font-size: clamp(1.15rem, 2.6vw, 1.6rem);
-    text-align: center;
-}
-
-/* Butonlar üst üste ve tam genişlik: LoginPage .login-btn ile aynı ölçüler */
-.welcome-actions {
+/* Buton grubu üst üste, tam genişlik (LoginPage'in .login-btn ölçüleriyle) */
+.order-actions {
     display: flex;
     flex-direction: column;
     gap: clamp(12px, 2.6vw, 16px);
@@ -103,7 +100,7 @@ export default {
     border-color: var(--primary-dark);
 }
 
-/* Tablet/desktop ufak rötuşlar: LoginPage ile aynı */
+/* Tablet/desktop rötuş: LoginPage ile aynı */
 @media (min-width:768px) {
     .login-form {
         border-radius: 16px;
