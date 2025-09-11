@@ -1,19 +1,20 @@
 <template>
     <div class="page-wrapper">
         <div class="login-container">
-            <div class="login-form">
+            <div class="page-container">
                 <button class="back-btn" @click="$router.push('/welcome')" aria-label="Geri Dön">
                     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15.5 7L9.5 14L15.5 21" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M15.5 7L9.5 14L15.5 21" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+                            stroke-linejoin="round" />
                     </svg>
                 </button>
                 <img src="../assets/logo.png" alt="Logo" class="login-logo" />
 
                 <div class="order-actions">
-                    <button class="login-btn" @click="$emit('order-action', 'acik-masalar')">
+                    <button class="login-btn" @click="$router.push('/tables')">
                         Açık Masalar
                     </button>
-                    <button class="login-btn" @click="$emit('order-action', 'yeni-masa')">
+                    <button class="login-btn" @click="$router.push('/new-table')">
                         Yeni Masa Aç
                     </button>
                 </div>
@@ -54,7 +55,7 @@ export default {
     display: grid;
 }
 
-.login-form {
+.page-container {
     position: relative;
     width: 100%;
     max-width: 520px;
@@ -107,22 +108,7 @@ export default {
 }
 
 /* Geri butonu stili */
-.back-btn {
-    position: absolute;
-    top: 18px;
-    left: 18px;
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    color: var(--primary);
-    z-index: 2;
-    transition: color 0.2s;
-}
-
-.back-btn:hover {
-    color: var(--primary-dark);
-}
+/* Geri dön tuşu tam container içinde, üst sol köşede */
 
 /* Tablet/desktop rötuş: LoginPage ile aynı */
 @media (min-width:768px) {

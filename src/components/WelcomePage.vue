@@ -1,10 +1,10 @@
 <template>
     <div class="page-wrapper">
         <div class="login-container">
-            <div class="login-form welcome-form">
+            <div class="page-container">
                 <img src="../assets/logo.png" alt="Logo" class="login-logo" />
 
-                <div class="welcome-actions">
+                <div class="order-actions">
                     <button class="login-btn" @click="$router.push('/order')">Sipariş Ver</button>
                     <button class="login-btn" @click="$emit('action', 'odeme')">Ödeme Al</button>
                 </div>
@@ -44,13 +44,14 @@ export default {
 }
 
 /* Kart ölçüleri/padding/kenarlıklar: LoginPage .login-form ile aynı */
-.login-form {
+/* OrderPage ile birebir aynı container ve buton stilleri */
+.page-container {
+    position: relative;
     width: 100%;
     max-width: 520px;
     margin-inline: auto;
     max-height: calc(100dvh - 32px);
     overflow: auto;
-
     background: var(--surface);
     padding: clamp(16px, 4.8vw, 28px);
     border-radius: 14px;
@@ -61,26 +62,7 @@ export default {
     gap: clamp(12px, 2.6vw, 16px);
 }
 
-/* Logo boyutu ve boşlukları birebir */
-.login-logo {
-    display: block;
-    margin: 0 auto clamp(14px, 3vw, 24px) auto;
-    max-width: clamp(96px, 40%, 160px);
-    height: auto;
-}
-
-/* Başlık stili birebir */
-.login-form h2 {
-    margin: 0 0 clamp(8px, 1.8vw, 12px) 0;
-    font-weight: 700;
-    letter-spacing: .02em;
-    color: var(--text-main);
-    font-size: clamp(1.15rem, 2.6vw, 1.6rem);
-    text-align: center;
-}
-
-/* Butonlar üst üste ve tam genişlik: LoginPage .login-btn ile aynı ölçüler */
-.welcome-actions {
+.order-actions {
     display: flex;
     flex-direction: column;
     gap: clamp(12px, 2.6vw, 16px);
@@ -101,6 +83,21 @@ export default {
 .login-btn:hover {
     background: var(--primary-dark);
     border-color: var(--primary-dark);
+}
+
+.login-logo {
+    display: block;
+    margin: 0 auto clamp(14px, 3vw, 24px) auto;
+    max-width: clamp(96px, 40%, 160px);
+    height: auto;
+}
+
+/* Butonlar üst üste ve tam genişlik: LoginPage .login-btn ile aynı ölçüler */
+.welcome-actions {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(12px, 2.6vw, 16px);
+    width: 100%;
 }
 
 /* Tablet/desktop ufak rötuşlar: LoginPage ile aynı */
