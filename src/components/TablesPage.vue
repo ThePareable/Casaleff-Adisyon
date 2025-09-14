@@ -54,6 +54,40 @@ export default {
 </script>
 
 <style scoped>
+.order-container {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 40px auto;
+    background: var(--container-bg, var(--surface));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
+    padding: 48px 32px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: min(640px, calc(100dvh - 96px));
+    overflow: auto;
+}
+
+.order-container {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 40px auto;
+    background: var(--container-bg, var(--surface));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
+    padding: 48px 32px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: min(640px, calc(100dvh - 96px));
+    overflow: auto;
+}
+
 /* === Ortada küçük kart iskeleti (Order/NewTable ile uyumlu) === */
 *,
 *::before,
@@ -73,7 +107,7 @@ export default {
 
 .login-container {
     width: 100%;
-    max-width: 520px;
+    max-width: 640px;
     /* kart üst sınırı */
     padding-inline: 8px;
     /* çok dar ekranda kenarlar çarpmasın */

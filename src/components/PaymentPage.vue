@@ -52,6 +52,40 @@ export default {
 </script>
 
 <style scoped>
+.order-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 40px auto;
+    background: var(--container-bg, var(--surface));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
+    padding: 48px 32px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: min(640px, calc(100dvh - 96px));
+    overflow: auto;
+}
+
+.order-container {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    margin: 40px auto;
+    background: var(--container-bg, var(--surface));
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
+    padding: 48px 32px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-height: min(640px, calc(100dvh - 96px));
+    overflow: auto;
+}
+
 .page-wrapper {
     min-height: 100vh;
     display: flex;
@@ -63,7 +97,7 @@ export default {
 .order-container {
     position: relative;
     width: 100%;
-    max-width: 520px;
+    max-width: 640px;
     margin: auto;
     background: var(--container-bg);
     border-radius: 24px;

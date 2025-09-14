@@ -334,7 +334,9 @@ export default {
 .order-container {
     position: relative;
     width: 100%;
-    max-width: 520px;
+    max-width: 640px;
+    margin: 40px auto;
+    padding: 48px 32px 32px 32px;
     margin: auto;
     background: var(--container-bg, var(--surface));
     border: 1px solid var(--border);
