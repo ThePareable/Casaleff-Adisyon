@@ -18,7 +18,9 @@
 
                 <!-- Boş masalar -->
                 <div class="list">
-                    <div v-for="table in emptyTables" :key="table.id" class="item">
+                    <div v-for="table in emptyTables" :key="table.id" class="item"
+                        @click="$router.push({ name: 'add-order', params: { tableId: table.id } })"
+                        style="cursor:pointer;">
                         <div class="item-info">
                             <span class="item-name">Masa {{ table.id }}</span>
                             <span class="item-status">Boş</span>

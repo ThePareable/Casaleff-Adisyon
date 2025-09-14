@@ -4,6 +4,7 @@ import WelcomePage from './components/WelcomePage.vue'
 import OrderPage from './components/OrderPage.vue'
 import TablesPage from './components/TablesPage.vue'
 import NewTablePage from './components/NewTablePage.vue'
+import PaymentPage from './components/PaymentPage.vue'
 
 const routes = [
     { path: '/', component: LoginPage },
@@ -11,6 +12,9 @@ const routes = [
     { path: '/order', component: OrderPage },
     { path: '/tables', component: TablesPage },
     { path: '/new-table', component: NewTablePage },
+    { path: '/add-order/:tableId', name: 'add-order', component: () => import('./components/AddOrderPage.vue'), props: true },
+    { path: '/payment', component: PaymentPage },
+    { path: '/payment/:tableId', name: 'PaymentDetail', component: () => import('./components/PaymentDetailPage.vue'), props: true },
     { path: '/:catchAll(.*)', redirect: '/' }
 ]
 

@@ -18,7 +18,9 @@
 
                 <!-- Liste -->
                 <div class="tables-list">
-                    <div v-for="table in openTables" :key="table.id" class="table-card">
+                    <div v-for="table in openTables" :key="table.id" class="table-card"
+                        @click="$router.push({ name: 'add-order', params: { tableId: table.id } })"
+                        style="cursor:pointer;">
                         <div class="table-info">
                             <span class="table-name">Masa {{ table.id }}</span>
                             <span class="order-status">Sipariş Açık</span>

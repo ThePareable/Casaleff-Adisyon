@@ -6,7 +6,8 @@
 
                 <div class="order-actions">
                     <button class="login-btn" @click="$router.push('/order')">Sipariş Ver</button>
-                    <button class="login-btn" @click="$emit('action', 'odeme')">Ödeme Al</button>
+                    <button class="login-btn" @click="$router.push('/payment')">Ödeme Al</button>
+                    <button class="login-btn" @click="$emit('action', 'menu')">Menü Düzenle</button>
                 </div>
             </div>
         </div>
