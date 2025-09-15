@@ -78,7 +78,7 @@ export default {
     position: relative;
     min-width: 330px;
     max-width: 640px;
-    min-height: 275px;
+    min-height: 250px;
     margin: 0 auto;
     background: var(--surface, #fff);
     border: 1px solid var(--border, #e6e6e6);
