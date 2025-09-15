@@ -3,27 +3,31 @@
 import { useRoute } from 'vue-router'
 const route = useRoute()
 
-// Geçiş adı (hep sağdan sola kaydırma)
+// Yön sabit: sağdan sola kaydır
 const transitionName = 'slide-forward'
 </script>
 
 <template>
-  <!-- Bannerlar sabit (animasyondan bağımsız) -->
-  <div class="banner-strip top-strip" aria-hidden="true"></div>
-
-  <!-- İçerik sahnesi: tüm route içerikleri burada kaydırılır -->
-  <!-- mode KULLANMIYORUZ -> enter ve leave aynı anda çalışır -->
+  <!-- BÜTÜN SAHNE (banner + içerik) TEK PARÇA HALİNDE ANİMASYONA GİRER -->
+  <!-- mode kullanmıyoruz; enter/leave aynı anda akıyor -->
   <transition :name="transitionName">
-    <div class="content-stage" :key="route.fullPath">
-      <router-view />
+    <div class="scene" :key="route.fullPath">
+      <!-- Üst banner -->
+      <div class="banner-strip banner-top" aria-hidden="true"></div>
+
+      <!-- İçerik (bannerlar arasında, ortada) -->
+      <div class="stage">
+        <router-view />
+      </div>
+
+      <!-- Alt banner -->
+      <div class="banner-strip banner-bottom" aria-hidden="true"></div>
     </div>
   </transition>
-
-  <div class="banner-strip bottom-strip" aria-hidden="true"></div>
 </template>
 
 <style scoped>
-/* --- Global küçük ayarlar (scroll kapat) --- */
+/* ==== Global kaplama & scroll kapalı ==== */
 :global(html, body, #app) {
   height: 100%;
 }
@@ -35,48 +39,62 @@ const transitionName = 'slide-forward'
   background: var(--background, #fff);
 }
 
-/* --- Bannerlar (sabit) --- */
-.banner-strip {
+/* ==== SAHNE: tüm içerik + bannerlar ==== */
+.scene {
   position: fixed;
-  left: 0;
+  /* viewport’a sabit */
+  inset: 0;
+  /* top/right/bottom/left: 0 */
   width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  /* taşmalar görünmesin */
+  will-change: transform;
+  /* akıcı animasyon */
+}
+
+/* ==== İçerik alanı (bannerların arasında) ==== */
+.stage {
+  position: absolute;
+  left: 0;
+  top: 40px;
+  /* üst banner yüksekliği */
+  width: 100%;
+  height: calc(100dvh - 80px);
+  /* iki banner arası alan */
+  display: grid;
+  place-items: center;
+  /* sayfa kartlarını ortala */
+  overflow: hidden;
+  /* iç komponentlerin taşması görünmesin */
+  padding: 0 16px;
+  /* kenarda nefes */
+}
+
+/* ==== Banner şeritleri ==== */
+.banner-strip {
+  position: absolute;
+  left: 0;
+  width: 100%;
   height: 40px;
   background-image: url('./assets/banner.png');
   background-repeat: repeat-x;
   background-size: auto 40px;
   background-position: 0 50%;
-  z-index: 1000;
   pointer-events: none;
   /* tıklamayı engellemesin */
+  z-index: 2;
 }
 
-.top-strip {
+.banner-top {
   top: 0;
 }
 
-.bottom-strip {
+.banner-bottom {
   bottom: 0;
 }
 
-/* --- İçerik sahnesi: bannerların arasında kalan, ortalanmış alan --- */
-.content-stage {
-  position: fixed;
-  left: 0;
-  top: 40px;
-  /* üst banner yüksekliği */
-  width: 100vw;
-  height: calc(100dvh - 80px);
-  /* iki banner arası alan */
-  display: grid;
-  place-items: center;
-  /* ortada tut */
-  overflow: hidden;
-  /* taşmalar görünmesin */
-  will-change: transform;
-  /* daha akıcı animasyon */
-}
-
-/* --- Kayan sayfa geçişi (fade yok, sadece transform) --- */
+/* ==== Yana kaydırma geçişleri (FADE YOK) ==== */
 .slide-forward-enter-active,
 .slide-forward-leave-active {
   transition: transform 0.45s cubic-bezier(.55, 0, .1, 1);
@@ -86,7 +104,7 @@ const transitionName = 'slide-forward'
   transform: translateX(100vw);
 }
 
-/* yeni içerik sağdan gelir */
+/* yeni sahne sağdan gelir */
 .slide-forward-enter-to {
   transform: translateX(0);
 }
@@ -95,12 +113,13 @@ const transitionName = 'slide-forward'
   transform: translateX(0);
 }
 
-/* eski içerik sola gider */
 .slide-forward-leave-to {
   transform: translateX(-100vw);
 }
 
-/* İstersen geri yön için ikinci set (kullanmak için :name'i 'slide-back' yap) */
+/* eski sahne sola gider */
+
+/* İstersen geri yön için ikinci set (transitionName='slide-back') */
 .slide-back-enter-active,
 .slide-back-leave-active {
   transition: transform 0.45s cubic-bezier(.55, 0, .1, 1);
@@ -120,5 +139,16 @@ const transitionName = 'slide-forward'
 
 .slide-back-leave-to {
   transform: translateX(100vw);
+}
+
+/* Hareket azaltma */
+@media (prefers-reduced-motion: reduce) {
+
+  .slide-forward-enter-active,
+  .slide-forward-leave-active,
+  .slide-back-enter-active,
+  .slide-back-leave-active {
+    transition: none;
+  }
 }
 </style>
