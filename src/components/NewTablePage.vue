@@ -13,9 +13,6 @@
                 <!-- Logo -->
                 <img src="../assets/logo.png" alt="Logo" class="logo" />
 
-                <!-- Başlık -->
-                <h2 class="title">Yeni Masa Aç</h2>
-
                 <!-- Boş masalar -->
                 <div class="list">
                     <div v-for="table in emptyTables" :key="table.id" class="item"
@@ -54,49 +51,7 @@ export default {
 </script>
 
 <style scoped>
-.order-container {
-    position: relative;
-    width: 100%;
-    max-width: 640px;
-    margin: 40px auto;
-    background: var(--container-bg, var(--surface));
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
-    padding: 48px 32px 32px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-height: min(640px, calc(100dvh - 96px));
-    overflow: auto;
-}
-
-.order-container {
-    position: relative;
-    width: 100%;
-    max-width: 640px;
-    margin: 40px auto;
-    background: var(--container-bg, var(--surface));
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
-    padding: 48px 32px 32px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-height: min(640px, calc(100dvh - 96px));
-    overflow: auto;
-}
-
-/* TablesPage ile aynı container genişliği ve padding */
-.login-container {
-    width: 100%;
-    max-width: 640px;
-    padding-inline: 8px;
-    margin: auto;
-}
-
-/* === SAYFA: ortalama ve güvenli boşluk === */
+/* ==== iskelet ==== */
 *,
 *::before,
 *::after {
@@ -107,28 +62,41 @@ export default {
     min-height: 100dvh;
     display: grid;
     place-items: center;
-    /* yatay + dikey ortalama */
     background: var(--background);
     padding: 24px;
 }
 
+.login-container {
+    width: 100%;
+    display: grid;
+    place-items: center;
+    padding-inline: 8px;
+}
+
+/* === TAM OLARAK Order/Tables ile aynı genişlik === */
 .page-container {
     position: relative;
-    background: var(--container-bg, var(--surface));
-    border: 1px solid var(--border);
+    min-width: 330px;
+    max-width: 640px;
+    min-height: 275px;
+    margin: 0 auto;
+    background: var(--surface, #fff);
+    border: 1px solid var(--border, #e6e6e6);
     border-radius: 24px;
     box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
-    padding: 32px 24px 24px 24px;
+    padding: 32px 24px 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-width: 520px;
-    max-height: min(640px, calc(100dvh - 96px));
-    margin: auto;
+    overflow: hidden;
+}
+
+.page-container--scroll {
+    max-height: min(650px, calc(100dvh - 32px));
     overflow: auto;
 }
 
-/* === LOGO & BAŞLIK === */
+/* === logo & başlık === */
 .logo {
     width: 80px;
     height: auto;
@@ -144,7 +112,7 @@ export default {
     text-align: center;
 }
 
-/* === LİSTE === */
+/* === liste === */
 .list {
     width: 100%;
     display: flex;
@@ -179,13 +147,28 @@ export default {
     color: var(--accent, #5d6b63);
 }
 
-/* === GERİ BUTONU (OrderPage ile aynı, ufak boyutlu) === */
+/* === geri butonu (ufak) === */
+.back-btn {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--primary);
+    z-index: 2;
+    transition: color .2s;
+}
 
-/* === MOBİL === */
-@media (max-width: 480px) {
+.back-btn:hover {
+    color: var(--primary-dark);
+}
+
+/* mobil küçük dokunuş */
+@media (max-width:480px) {
     .page-container {
-        max-width: 420px;
-        padding: 24px 12px 16px 12px;
+        padding: 24px 12px 16px;
     }
 }
 </style>

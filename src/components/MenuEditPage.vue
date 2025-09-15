@@ -203,20 +203,53 @@ export default {
     width: 100%;
 }
 
-.menu-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 8px 0;
-    width: 100%;
-}
 
 .menu-list li {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 8px 0;
+    gap: 16px;
+    padding: 16px 0;
     border-bottom: 1px solid #ececec;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    word-break: break-word;
 }
+
+@media (max-width: 600px) {
+    .order-container {
+        max-width: 98vw;
+        padding: 18px 4vw 18px 4vw;
+        box-sizing: border-box;
+    }
+
+    .menu-list li {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 18px 0;
+        margin-bottom: 14px;
+        word-break: break-word;
+    }
+
+    .menu-input,
+    .menu-input.price,
+    .menu-input.category {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        font-size: 1.05rem;
+        word-break: break-word;
+    }
+
+    .delete-btn,
+    .add-btn {
+        width: 100%;
+        margin-top: 4px;
+        font-size: 1.08rem;
+    }
+}
+
+/* Yukarıdaki responsive ve ana .menu-list li blokları zaten mevcut, bu tekrarlı ve hatalı blok kaldırıldı. */
 
 .menu-input {
     font-size: 1rem;
@@ -243,8 +276,32 @@ export default {
 
 .add-section {
     display: flex;
-    gap: 12px;
-    margin-top: 18px;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+    width: 100%;
+}
+
+@media (min-width: 601px) {
+    .add-section {
+        flex-direction: row;
+        gap: 16px;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .add-section .menu-input,
+    .add-section .menu-input.price,
+    .add-section .menu-input.category {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    .add-section .add-btn {
+        width: 100%;
+        font-size: 1.08rem;
+    }
 }
 
 .add-btn {

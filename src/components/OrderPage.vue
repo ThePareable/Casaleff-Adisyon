@@ -1,27 +1,27 @@
-<template>
-    <div class="page-wrapper">
-        <div class="login-container">
-            <div class="page-container">
-                <button class="back-btn" @click="$router.push('/welcome')" aria-label="Geri Dön">
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15.5 7L9.5 14L15.5 21" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                </button>
-                <img src="../assets/logo.png" alt="Logo" class="login-logo" />
+    <template>
+        <div class="page-wrapper">
+            <div class="login-container">
+                <div class="page-container">
+                    <button class="back-btn" @click="$router.push('/welcome')" aria-label="Geri Dön">
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.5 7L9.5 14L15.5 21" stroke="currentColor" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <img src="../assets/logo.png" alt="Logo" class="login-logo" />
 
-                <div class="order-actions">
-                    <button class="login-btn" @click="$router.push('/tables')">
-                        Açık Masalar
-                    </button>
-                    <button class="login-btn" @click="$router.push('/new-table')">
-                        Yeni Masa Aç
-                    </button>
+                    <div class="order-actions">
+                        <button class="login-btn" @click="$router.push('/tables')">
+                            Açık Masalar
+                        </button>
+                        <button class="login-btn" @click="$router.push('/new-table')">
+                            Yeni Masa Aç
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</template>
+    </template>
 
 <script>
 export default {
