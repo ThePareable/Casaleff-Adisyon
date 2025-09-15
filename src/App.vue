@@ -9,12 +9,9 @@ const transitionName = 'slide-forward'
 </script>
 
 <template>
-  <!--
   <transition name="slide-forward" mode="out-in">
     <router-view />
   </transition>
-  -->
-  <router-view />
 </template>
 
 <style scoped>

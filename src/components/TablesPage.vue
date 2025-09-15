@@ -75,7 +75,7 @@ export default {
     position: relative;
     width: 100%;
     max-width: 640px;
-    margin: 40px auto;
+    margin: 40px;
     background: var(--container-bg, var(--surface));
     border: 1px solid var(--border);
     border-radius: 24px;
