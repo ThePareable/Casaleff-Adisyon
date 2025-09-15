@@ -1,82 +1,124 @@
+<!-- App.vue -->
 <script setup>
-import { ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-
+import { useRoute } from 'vue-router'
 const route = useRoute()
-const router = useRouter()
-// Animasyon yönü sabit: her zaman sağdan gelsin
+
+// Geçiş adı (hep sağdan sola kaydırma)
 const transitionName = 'slide-forward'
 </script>
 
 <template>
-  <transition name="slide-forward" mode="out-in">
-    <router-view />
+  <!-- Bannerlar sabit (animasyondan bağımsız) -->
+  <div class="banner-strip top-strip" aria-hidden="true"></div>
+
+  <!-- İçerik sahnesi: tüm route içerikleri burada kaydırılır -->
+  <!-- mode KULLANMIYORUZ -> enter ve leave aynı anda çalışır -->
+  <transition :name="transitionName">
+    <div class="content-stage" :key="route.fullPath">
+      <router-view />
+    </div>
   </transition>
+
+  <div class="banner-strip bottom-strip" aria-hidden="true"></div>
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+/* --- Global küçük ayarlar (scroll kapat) --- */
+:global(html, body, #app) {
+  height: 100%;
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+:global(body) {
+  margin: 0;
+  overflow: hidden;
+  /* sayfa düzeyinde scroll yok */
+  background: var(--background, #fff);
 }
 
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+/* --- Bannerlar (sabit) --- */
+.banner-strip {
+  position: fixed;
+  left: 0;
+  width: 100vw;
+  height: 40px;
+  background-image: url('./assets/banner.png');
+  background-repeat: repeat-x;
+  background-size: auto 40px;
+  background-position: 0 50%;
+  z-index: 1000;
+  pointer-events: none;
+  /* tıklamayı engellemesin */
 }
 
+.top-strip {
+  top: 0;
+}
+
+.bottom-strip {
+  bottom: 0;
+}
+
+/* --- İçerik sahnesi: bannerların arasında kalan, ortalanmış alan --- */
+.content-stage {
+  position: fixed;
+  left: 0;
+  top: 40px;
+  /* üst banner yüksekliği */
+  width: 100vw;
+  height: calc(100dvh - 80px);
+  /* iki banner arası alan */
+  display: grid;
+  place-items: center;
+  /* ortada tut */
+  overflow: hidden;
+  /* taşmalar görünmesin */
+  will-change: transform;
+  /* daha akıcı animasyon */
+}
+
+/* --- Kayan sayfa geçişi (fade yok, sadece transform) --- */
 .slide-forward-enter-active,
 .slide-forward-leave-active {
-  transition: transform 0.45s cubic-bezier(.55, 0, .1, 1), opacity 0.35s;
+  transition: transform 0.45s cubic-bezier(.55, 0, .1, 1);
 }
 
 .slide-forward-enter-from {
   transform: translateX(100vw);
-  opacity: 0.2;
 }
 
+/* yeni içerik sağdan gelir */
 .slide-forward-enter-to {
   transform: translateX(0);
-  opacity: 1;
 }
 
 .slide-forward-leave-from {
   transform: translateX(0);
-  opacity: 1;
 }
 
+/* eski içerik sola gider */
 .slide-forward-leave-to {
   transform: translateX(-100vw);
-  opacity: 0.2;
 }
 
+/* İstersen geri yön için ikinci set (kullanmak için :name'i 'slide-back' yap) */
 .slide-back-enter-active,
 .slide-back-leave-active {
-  transition: transform 0.45s cubic-bezier(.55, 0, .1, 1), opacity 0.35s;
+  transition: transform 0.45s cubic-bezier(.55, 0, .1, 1);
 }
 
 .slide-back-enter-from {
   transform: translateX(-100vw);
-  opacity: 0.2;
 }
 
 .slide-back-enter-to {
   transform: translateX(0);
-  opacity: 1;
 }
 
 .slide-back-leave-from {
   transform: translateX(0);
-  opacity: 1;
 }
 
 .slide-back-leave-to {
   transform: translateX(100vw);
-  opacity: 0.2;
 }
 </style>
