@@ -348,7 +348,7 @@ export default {
     align-items: center;
 
     /* içerik uzarsa kart içinde scroll */
-    max-height: min(640px, calc(100dvh - 96px));
+    max-height: min(680px, calc(100dvh - 96px));
     overflow: auto;
 }
 
