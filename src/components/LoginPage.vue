@@ -7,11 +7,15 @@
                 <!-- Görsel olmayan etiket (erişilebilirlik) -->
                 <label class="visually-hidden" for="pin-input">4 haneli PIN</label>
 
-                <input id="pin-input" class="pin-input" type="password" v-model="pin" maxlength="4" inputmode="numeric"
-                    pattern="[0-9]{4}" placeholder="••••" autocomplete="one-time-code" required
+                <input id="pin-input" class="pin-input" type="password" v-model="pin" maxlength="10" inputmode="text"
+                    pattern="[A-Za-z0-9]{1,10}" placeholder="Şifre" autocomplete="one-time-code" required
                     aria-describedby="pin-help" />
                 <button type="submit" class="login-btn">Giriş Yap</button>
-                <p v-if="error" class="error-msg" role="alert">{{ error }}</p>
+                <div v-if="error" class="error-actions">
+                    <p class="error-msg" role="alert">{{ error }}</p>
+                    <button v-if="error === 'Sunucuya bağlanılamadı.'" type="button" class="login-btn retry-btn"
+                        @click="handleLogin">Tekrar dene</button>
+                </div>
             </form>
         </div>
     </div>
@@ -26,15 +30,29 @@ const router = useRouter()
 export default {
     name: 'LoginPage',
     data() {
-        return { pin: '', error: '' };
+        return { pin: '', error: '', loading: false };
     },
     methods: {
-        handleLogin() {
-            if (this.pin === '1234') {
-                this.error = '';
-                this.$router.push('/welcome');
-            } else {
-                this.error = 'PIN yanlış, tekrar deneyin.';
+        async handleLogin() {
+            this.error = '';
+            this.loading = true;
+            try {
+                const response = await fetch('http://localhost:8080/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: this.pin
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('sessionId', result);
+                    this.$router.push('/welcome');
+                } else {
+                    this.error = result.message || 'PIN yanlış, tekrar deneyin.';
+                }
+            } catch (err) {
+                this.error = 'Sunucuya bağlanılamadı.';
+            } finally {
+                this.loading = false;
             }
         }
     }
@@ -42,6 +60,22 @@ export default {
 </script>
 
 <style scoped>
+.error-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.retry-btn {
+    width: auto;
+    min-width: 120px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    margin: 0 auto;
+}
+
 /* Taşmaları öngörülebilir kıl */
 *,
 *::before,
@@ -51,15 +85,13 @@ export default {
 
 /* ===== Layout (scroll fix) ===== */
 .page-wrapper {
-    /* Dinamik viewport: adres çubuğu iniş-kalkışlarında doğru değer */
-    min-height: 100dvh;
-    display: grid;
-    place-items: center;
+    min-height: 90dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--background);
-    /* Kenarlarda güvenli alan kadar min boşluk */
     padding-inline: max(16px, env(safe-area-inset-left), 4vw);
     padding-inline-end: max(16px, env(safe-area-inset-right), 4vw);
-    /* Dikeyde fazladan padding yok -> scroll yaratmaz */
     padding-block: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-bottom));
 }
 
