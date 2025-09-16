@@ -66,8 +66,6 @@ const transitionName = 'slide-forward'
   place-items: center;
   /* sayfa kartlarını ortala */
   overflow: hidden;
-  /* iç komponentlerin taşması görünmesin */
-  padding: 0 16px;
   /* kenarda nefes */
 }
 

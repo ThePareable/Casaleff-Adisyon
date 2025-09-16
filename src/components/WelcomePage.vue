@@ -24,8 +24,8 @@ export default {
 .order-container {
     position: relative;
     width: 100%;
-    max-width: 400px;
-    margin: 40px auto;
+    max-width: 90vw;
+    margin: 0 auto;
     background: var(--container-bg, var(--surface));
     border: 1px solid var(--border);
     border-radius: 24px;
@@ -34,24 +34,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
-    max-height: min(640px, calc(100dvh - 96px));
-    overflow: auto;
-}
-
-.order-container {
-    position: relative;
-    width: 100%;
-    max-width: 640px;
-    margin: 40px auto;
-    background: var(--container-bg, var(--surface));
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
-    padding: 48px 32px 32px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-height: min(640px, calc(100dvh - 96px));
+    max-height: min(80vh, calc(100dvh - 8vh));
     overflow: auto;
 }
 
@@ -64,8 +47,9 @@ export default {
 
 .page-wrapper {
     min-height: 100dvh;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--background);
     padding-inline: max(16px, env(safe-area-inset-left), 4vw);
     padding-inline-end: max(16px, env(safe-area-inset-right), 4vw);

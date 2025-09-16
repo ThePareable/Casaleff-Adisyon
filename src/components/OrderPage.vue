@@ -56,9 +56,9 @@ export default {
 
 .page-wrapper {
     min-height: 100dvh;
-    /* LoginPage ile aynı */
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--background);
     padding-inline: max(16px, env(safe-area-inset-left), 4vw);
     padding-inline-end: max(16px, env(safe-area-inset-right), 4vw);

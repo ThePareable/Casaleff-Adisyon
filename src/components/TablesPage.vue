@@ -32,15 +32,11 @@
 <script>
 export default {
     name: 'TablesPage',
-    data() {
-        return {
-            tables: [
-                { id: 1, hasOrder: true },
-                { id: 2, hasOrder: true },
-                { id: 3, hasOrder: false },
-                { id: 4, hasOrder: true },
-            ],
-        };
+    props: {
+        tables: {
+            type: Array,
+            required: true
+        }
     },
     computed: {
         openTables() {
@@ -60,8 +56,9 @@ export default {
 
 .page-wrapper {
     min-height: 100dvh;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--background);
     padding-inline: max(16px, env(safe-area-inset-left), 4vw);
     padding-inline-end: max(16px, env(safe-area-inset-right), 4vw);

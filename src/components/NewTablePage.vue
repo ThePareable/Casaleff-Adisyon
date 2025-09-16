@@ -1,7 +1,8 @@
+<!-- NewTablePage.vue -->
 <template>
     <div class="page-wrapper">
         <div class="login-container">
-            <div class="page-container">
+            <div class="page-container" :class="{ 'page-container--scroll': shouldScroll }">
                 <!-- Geri -->
                 <button class="back-btn" @click="$router.push('/order')" aria-label="Geri Dön">
                     <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -13,8 +14,15 @@
                 <!-- Logo -->
                 <img src="../assets/logo.png" alt="Logo" class="logo" />
 
-                <!-- Boş masalar -->
-                <div class="list">
+                <!-- Durumlar -->
+                <div v-if="loading" class="state muted">Yükleniyor…</div>
+                <div v-else-if="error" class="state error">
+                    {{ error }}
+                    <button class="retry-btn" @click="fetchEmptyTables">Tekrar dene</button>
+                </div>
+
+                <!-- Liste -->
+                <div v-else class="list">
                     <div v-for="table in emptyTables" :key="table.id" class="item"
                         @click="$router.push({ name: 'add-order', params: { tableId: table.id } })"
                         style="cursor:pointer;">
@@ -23,6 +31,7 @@
                             <span class="item-status">Boş</span>
                         </div>
                     </div>
+                    <div v-if="!emptyTables.length" class="state muted">Şu an boş masa yok.</div>
                 </div>
             </div>
         </div>
@@ -34,24 +43,82 @@ export default {
     name: 'NewTablePage',
     data() {
         return {
-            tables: [
-                { id: 1, hasOrder: true },
-                { id: 2, hasOrder: true },
-                { id: 3, hasOrder: false },
-                { id: 4, hasOrder: true },
-            ],
+            loading: false,
+            error: '',
+            emptyTables: [],
         };
     },
     computed: {
-        emptyTables() {
-            return this.tables.filter(t => !t.hasOrder);
+        shouldScroll() {
+            return this.emptyTables.length > 10;
         },
+    },
+    methods: {
+        // localStorage -> header için güvenli hale getir
+        getCleanSessionId() {
+            const raw = localStorage.getItem('sessionId') || '';
+            return raw.replace(/(^"|"$)/g, '').trim();
+        },
+
+        async fetchEmptyTables() {
+            this.loading = true;
+            this.error = '';
+
+            const sessionId = this.getCleanSessionId();
+            if (!sessionId) {
+                this.loading = false;
+                // E001 yani oturum yoksa login’e dön
+                this.$router.replace('/');
+                return;
+            }
+
+            try {
+                const resp = await fetch('http://localhost:8080/table/getEmpty', {
+                    method: 'GET',
+                    headers: {
+                        'X-Session-Id': sessionId,     // backend’in beklediği header
+                    },
+                });
+
+                // Hata gövdesi genelde {status, exception:{message: "..."}}
+                if (!resp.ok) {
+                    let msg = 'Boş masalar alınamadı.';
+                    try {
+                        const err = await resp.json();
+                        msg = err?.exception?.message || err?.message || msg;
+                    } catch (_) { }
+                    // Oturum yok/bozuksa login’e gönder
+                    if (msg.toLowerCase().includes('session') && msg.toLowerCase().includes('empty')) {
+                        this.$router.replace('/');
+                        return;
+                    }
+                    this.error = msg;
+                    return;
+                }
+
+                const data = await resp.json();
+                // [1,2,3] veya [{id:1},...] normalize
+                this.emptyTables = Array.isArray(data)
+                    ? (typeof data[0] === 'number'
+                        ? data.map(id => ({ id }))
+                        : (data[0] && typeof data[0] === 'object' && 'id' in data[0])
+                            ? data.map(t => ({ id: t.id }))
+                            : [])
+                    : [];
+            } catch (e) {
+                this.error = 'Sunucuya bağlanılamadı.';
+            } finally {
+                this.loading = false;
+            }
+        },
+    },
+    mounted() {
+        this.fetchEmptyTables();
     },
 };
 </script>
 
 <style scoped>
-/* ==== iskelet ==== */
 *,
 *::before,
 *::after {
@@ -60,8 +127,9 @@ export default {
 
 .page-wrapper {
     min-height: 100dvh;
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--background);
     padding: 24px;
 }
@@ -73,7 +141,6 @@ export default {
     padding-inline: 8px;
 }
 
-/* === TAM OLARAK Order/Tables ile aynı genişlik === */
 .page-container {
     position: relative;
     min-width: 330px;
@@ -96,7 +163,6 @@ export default {
     overflow: auto;
 }
 
-/* === logo & başlık === */
 .logo {
     width: 80px;
     height: auto;
@@ -104,15 +170,34 @@ export default {
     display: block;
 }
 
-.title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 24px;
-    color: var(--primary);
-    text-align: center;
+.state {
+    margin: 8px 0 12px;
+    font-size: .98rem;
 }
 
-/* === liste === */
+.state.muted {
+    color: var(--text-muted, #6b6b6b);
+}
+
+.state.error {
+    color: var(--error, #c62828);
+}
+
+.retry-btn {
+    margin-left: 10px;
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: #fff;
+    border-radius: 10px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.retry-btn:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
 .list {
     width: 100%;
     display: flex;
@@ -147,7 +232,6 @@ export default {
     color: var(--accent, #5d6b63);
 }
 
-/* === geri butonu (ufak) === */
 .back-btn {
     position: absolute;
     top: 18px;
@@ -165,7 +249,6 @@ export default {
     color: var(--primary-dark);
 }
 
-/* mobil küçük dokunuş */
 @media (max-width:480px) {
     .page-container {
         padding: 24px 12px 16px;

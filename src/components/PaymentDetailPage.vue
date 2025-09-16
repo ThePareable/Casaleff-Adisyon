@@ -195,7 +195,7 @@ export default {
 <style scoped>
 /* Sayfa ve kart iskeleti */
 .page-wrapper {
-    min-height: 100vh;
+    min-height: 90dvh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -205,8 +205,8 @@ export default {
 .order-container {
     position: relative;
     width: 100%;
-    max-width: 640px;
-    margin: auto;
+    max-width: 90vw;
+    margin: 0;
     background: var(--container-bg, var(--surface));
     border: 1px solid var(--border);
     border-radius: 24px;
@@ -217,7 +217,7 @@ export default {
     gap: 12px;
 
     /* içerik uzarsa kart içinde kaydır */
-    max-height: min(680px, calc(100dvh - 96px));
+    max-height: min(80vh, calc(100dvh - 8vh));
     overflow: auto;
 }
 

@@ -1,6 +1,6 @@
 <template>
     <div class="page-wrapper">
-        <div class="order-container">
+        <div class="page-container">
             <button class="back-btn" @click="$router.go(-1)">Geri</button>
             <h2 class="title">Ödeme Al</h2>
             <div class="orders-section">
@@ -28,7 +28,6 @@ export default {
     },
     computed: {
         tablesWithOrders() {
-            // Sadece siparişi olan masalar
             return Object.keys(this.ordersByTable)
                 .filter(key => this.ordersByTable[key] && this.ordersByTable[key].length > 0)
                 .map(id => ({ id }));
@@ -52,57 +51,34 @@ export default {
 </script>
 
 <style scoped>
-.order-container {
-    position: relative;
-    width: 100%;
-    max-width: 400px;
-    margin: 40px auto;
-    background: var(--container-bg, var(--surface));
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
-    padding: 48px 32px 32px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-height: min(640px, calc(100dvh - 96px));
-    overflow: auto;
-}
-
-.order-container {
-    position: relative;
-    width: 100%;
-    max-width: 640px;
-    margin: 40px auto;
-    background: var(--container-bg, var(--surface));
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
-    padding: 48px 32px 32px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-height: min(640px, calc(100dvh - 96px));
-    overflow: auto;
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
 }
 
 .page-wrapper {
-    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
     background: var(--background);
+    padding: 24px;
 }
 
-.order-container {
+.page-container {
     position: relative;
     width: 100%;
-    max-width: 640px;
-    margin: auto;
-    background: var(--container-bg);
+    min-width: 40vh;
+    max-width: max-content;
+    min-height: 60vh;
+    /* sabit min yükseklik */
+    margin: 0;
+    background: var(--container-bg, #fff);
+    border: 1px solid var(--border, #e6e6e6);
     border-radius: 24px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
-    padding: 32px 24px 24px 24px;
+    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
+    padding: 32px 24px 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -152,7 +128,7 @@ export default {
 .no-orders {
     font-size: 1rem;
     color: #aaa;
-    padding: 8px 0 8px 0;
+    padding: 8px 0;
 }
 
 .back-btn {
