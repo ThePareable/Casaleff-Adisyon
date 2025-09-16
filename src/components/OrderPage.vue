@@ -1,27 +1,27 @@
-<template>
-    <div class="page-wrapper">
-        <div class="login-container">
-            <div class="page-container">
-                <button class="back-btn" @click="$router.push('/welcome')" aria-label="Geri Dön">
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15.5 7L9.5 14L15.5 21" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                            stroke-linejoin="round" />
-                    </svg>
-                </button>
-                <img src="../assets/logo.png" alt="Logo" class="login-logo" />
+    <template>
+        <div class="page-wrapper">
+            <div class="login-container">
+                <div class="page-container">
+                    <button class="back-btn" @click="$router.push('/welcome')" aria-label="Geri Dön">
+                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15.5 7L9.5 14L15.5 21" stroke="currentColor" stroke-width="2.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <img src="../assets/logo.png" alt="Logo" class="login-logo" />
 
-                <div class="order-actions">
-                    <button class="login-btn" @click="$router.push('/tables')">
-                        Açık Masalar
-                    </button>
-                    <button class="login-btn" @click="$router.push('/new-table')">
-                        Yeni Masa Aç
-                    </button>
+                    <div class="order-actions">
+                        <button class="login-btn" @click="$router.push('/tables')">
+                            Açık Masalar
+                        </button>
+                        <button class="login-btn" @click="$router.push('/new-table')">
+                            Yeni Masa Aç
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</template>
+    </template>
 
 <script>
 export default {
@@ -34,24 +34,7 @@ export default {
     position: relative;
     width: 100%;
     max-width: 400px;
-    margin: 40px auto;
-    background: var(--container-bg, var(--surface));
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
-    padding: 48px 32px 32px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-height: min(640px, calc(100dvh - 96px));
-    overflow: auto;
-}
-
-.order-container {
-    position: relative;
-    width: 100%;
-    max-width: 640px;
-    margin: 40px auto;
+    margin: 40px;
     background: var(--container-bg, var(--surface));
     border: 1px solid var(--border);
     border-radius: 24px;
@@ -73,9 +56,9 @@ export default {
 
 .page-wrapper {
     min-height: 100dvh;
-    /* LoginPage ile aynı */
-    display: grid;
-    place-items: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--background);
     padding-inline: max(16px, env(safe-area-inset-left), 4vw);
     padding-inline-end: max(16px, env(safe-area-inset-right), 4vw);

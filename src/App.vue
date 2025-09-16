@@ -1,85 +1,152 @@
+<!-- App.vue -->
 <script setup>
-import { ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-
+import { useRoute } from 'vue-router'
 const route = useRoute()
-const router = useRouter()
-// Animasyon yönü sabit: her zaman sağdan gelsin
+
+// Yön sabit: sağdan sola kaydır
 const transitionName = 'slide-forward'
 </script>
 
 <template>
-  <!--
-  <transition name="slide-forward" mode="out-in">
-    <router-view />
+  <!-- BÜTÜN SAHNE (banner + içerik) TEK PARÇA HALİNDE ANİMASYONA GİRER -->
+  <!-- mode kullanmıyoruz; enter/leave aynı anda akıyor -->
+  <transition :name="transitionName">
+    <div class="scene" :key="route.fullPath">
+      <!-- Üst banner -->
+      <div class="banner-strip banner-top" aria-hidden="true"></div>
+
+      <!-- İçerik (bannerlar arasında, ortada) -->
+      <div class="stage">
+        <router-view />
+      </div>
+
+      <!-- Alt banner -->
+      <div class="banner-strip banner-bottom" aria-hidden="true"></div>
+    </div>
   </transition>
-  -->
-  <router-view />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+/* ==== Global kaplama & scroll kapalı ==== */
+:global(html, body, #app) {
+  height: 100%;
 }
 
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+:global(body) {
+  margin: 0;
+  overflow: hidden;
+  /* sayfa düzeyinde scroll yok */
+  background: var(--background, #fff);
 }
 
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+/* ==== SAHNE: tüm içerik + bannerlar ==== */
+.scene {
+  position: fixed;
+  /* viewport’a sabit */
+  inset: 0;
+  /* top/right/bottom/left: 0 */
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  /* taşmalar görünmesin */
+  will-change: transform;
+  /* akıcı animasyon */
 }
 
+/* ==== İçerik alanı (bannerların arasında) ==== */
+.stage {
+  position: absolute;
+  left: 0;
+  top: 40px;
+  /* üst banner yüksekliği */
+  width: 100%;
+  height: calc(100dvh - 80px);
+  /* iki banner arası alan */
+  display: grid;
+  place-items: center;
+  /* sayfa kartlarını ortala */
+  overflow: hidden;
+  /* kenarda nefes */
+}
+
+/* ==== Banner şeritleri ==== */
+.banner-strip {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  background-image: url('./assets/banner.png');
+  background-repeat: repeat-x;
+  background-size: auto 40px;
+  background-position: 0 50%;
+  pointer-events: none;
+  /* tıklamayı engellemesin */
+  z-index: 2;
+}
+
+.banner-top {
+  top: 0;
+}
+
+.banner-bottom {
+  bottom: 0;
+}
+
+/* ==== Yana kaydırma geçişleri (FADE YOK) ==== */
 .slide-forward-enter-active,
 .slide-forward-leave-active {
-  transition: transform 0.45s cubic-bezier(.55, 0, .1, 1), opacity 0.35s;
+  transition: transform 0.45s cubic-bezier(.55, 0, .1, 1);
 }
 
 .slide-forward-enter-from {
   transform: translateX(100vw);
-  opacity: 0.2;
 }
 
+/* yeni sahne sağdan gelir */
 .slide-forward-enter-to {
   transform: translateX(0);
-  opacity: 1;
 }
 
 .slide-forward-leave-from {
   transform: translateX(0);
-  opacity: 1;
 }
 
 .slide-forward-leave-to {
   transform: translateX(-100vw);
-  opacity: 0.2;
 }
 
+/* eski sahne sola gider */
+
+/* İstersen geri yön için ikinci set (transitionName='slide-back') */
 .slide-back-enter-active,
 .slide-back-leave-active {
-  transition: transform 0.45s cubic-bezier(.55, 0, .1, 1), opacity 0.35s;
+  transition: transform 0.45s cubic-bezier(.55, 0, .1, 1);
 }
 
 .slide-back-enter-from {
   transform: translateX(-100vw);
-  opacity: 0.2;
 }
 
 .slide-back-enter-to {
   transform: translateX(0);
-  opacity: 1;
 }
 
 .slide-back-leave-from {
   transform: translateX(0);
-  opacity: 1;
 }
 
 .slide-back-leave-to {
   transform: translateX(100vw);
-  opacity: 0.2;
+}
+
+/* Hareket azaltma */
+@media (prefers-reduced-motion: reduce) {
+
+  .slide-forward-enter-active,
+  .slide-forward-leave-active,
+  .slide-back-enter-active,
+  .slide-back-leave-active {
+    transition: none;
+  }
 }
 </style>

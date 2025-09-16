@@ -13,9 +13,6 @@
                 <!-- Logo -->
                 <img src="../assets/logo.png" alt="Logo" class="login-logo" />
 
-                <!-- Başlık -->
-                <h2 class="page-title">Açık Masalar</h2>
-
                 <!-- Liste -->
                 <div class="tables-list">
                     <div v-for="table in openTables" :key="table.id" class="table-card"
@@ -35,15 +32,11 @@
 <script>
 export default {
     name: 'TablesPage',
-    data() {
-        return {
-            tables: [
-                { id: 1, hasOrder: true },
-                { id: 2, hasOrder: true },
-                { id: 3, hasOrder: false },
-                { id: 4, hasOrder: true },
-            ],
-        };
+    props: {
+        tables: {
+            type: Array,
+            required: true
+        }
     },
     computed: {
         openTables() {
@@ -54,41 +47,7 @@ export default {
 </script>
 
 <style scoped>
-.order-container {
-    position: relative;
-    width: 100%;
-    max-width: 640px;
-    margin: 40px auto;
-    background: var(--container-bg, var(--surface));
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
-    padding: 48px 32px 32px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-height: min(640px, calc(100dvh - 96px));
-    overflow: auto;
-}
-
-.order-container {
-    position: relative;
-    width: 100%;
-    max-width: 640px;
-    margin: 40px auto;
-    background: var(--container-bg, var(--surface));
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
-    padding: 48px 32px 32px 32px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-height: min(640px, calc(100dvh - 96px));
-    overflow: auto;
-}
-
-/* === Ortada küçük kart iskeleti (Order/NewTable ile uyumlu) === */
+/* ==== OrderPage ile birebir aynı dış iskelet ==== */
 *,
 *::before,
 *::after {
@@ -97,57 +56,50 @@ export default {
 
 .page-wrapper {
     min-height: 100dvh;
-    display: grid;
-    place-items: center;
-    /* yatay + dikey merkez */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: var(--background);
-    padding: 24px;
-    /* kenarlarda sabit nefes */
+    padding-inline: max(16px, env(safe-area-inset-left), 4vw);
+    padding-inline-end: max(16px, env(safe-area-inset-right), 4vw);
+    padding-block: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-bottom));
 }
 
 .login-container {
     width: 100%;
-    max-width: 640px;
-    /* kart üst sınırı */
-    padding-inline: 8px;
-    /* çok dar ekranda kenarlar çarpmasın */
+    display: grid;
 }
 
+/* ==== Container: OrderPage ile aynı genişlik (640px) ==== */
 .page-container {
     position: relative;
-    /* back-btn için */
-    background: var(--container-bg, var(--surface));
+    width: 100%;
+    max-width: 640px;
+    /* <<< aynı genişlik */
+    margin-inline: auto;
+    max-height: min(650px, calc(100dvh - 32px));
+    overflow: auto;
+
+    background: var(--surface);
+    padding: clamp(16px, 4.8vw, 28px);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
     border: 1px solid var(--border);
-    border-radius: 24px;
-    box-shadow: 0 2px 16px rgba(0, 0, 0, .08);
-    padding: 32px 24px 24px 24px;
+
     display: flex;
     flex-direction: column;
-    align-items: center;
-
-    /* sayfa değil kart scroll yapsın */
-    max-height: min(640px, calc(100dvh - 96px));
-    overflow: auto;
+    gap: clamp(12px, 2.6vw, 16px);
 }
 
-/* === LOGO === */
+/* Logo ve başlık */
 .login-logo {
-    width: 80px;
-    height: auto;
-    margin-bottom: 16px;
     display: block;
+    margin: 0 auto clamp(14px, 3vw, 24px) auto;
+    max-width: clamp(96px, 40%, 160px);
+    height: auto;
 }
 
-/* === BAŞLIK === */
-.page-title {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 24px;
-    color: var(--primary);
-    text-align: center;
-}
-
-/* === LİSTE === */
+/* Liste */
 .tables-list {
     width: 100%;
     display: flex;
@@ -182,7 +134,7 @@ export default {
     color: var(--accent, #5d6b63);
 }
 
-/* === GERİ BUTONU (Order/NewTable ile aynı ufak ikon) === */
+/* Geri butonu (Order ile aynı) */
 .back-btn {
     position: absolute;
     top: 18px;
@@ -193,7 +145,7 @@ export default {
     cursor: pointer;
     color: var(--primary);
     z-index: 2;
-    transition: color 0.2s;
+    transition: color .2s;
 }
 
 .back-btn:hover {
