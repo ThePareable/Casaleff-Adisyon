@@ -7,8 +7,8 @@
                 <!-- Görsel olmayan etiket (erişilebilirlik) -->
                 <label class="visually-hidden" for="pin-input">4 haneli PIN</label>
 
-                <input id="pin-input" class="pin-input" type="password" v-model="pin" maxlength="10" inputmode="text"
-                    pattern="[A-Za-z0-9]{1,10}" placeholder="Şifre" autocomplete="one-time-code" required
+                <input id="pin-input" class="pin-input" type="password" v-model="pin" maxlength="4"
+                    inputmode="alphanumeric" pattern="[0-9]{4}" placeholder="PIN" autocomplete="one-time-code" required
                     aria-describedby="pin-help" />
                 <button type="submit" class="login-btn">Giriş Yap</button>
                 <div v-if="error" class="error-actions">
@@ -44,7 +44,10 @@ export default {
                 });
                 const result = await response.json();
                 if (response.ok) {
-                    localStorage.setItem('sessionId', result);
+                    // Remove quotes and trim
+                    let sessionId = typeof result === 'string' ? result : String(result);
+                    sessionId = sessionId.replace(/^"|"$/g, '').trim();
+                    localStorage.setItem('sessionId', sessionId);
                     this.$router.push('/welcome');
                 } else {
                     this.error = result.message || 'PIN yanlış, tekrar deneyin.';

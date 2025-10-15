@@ -38,7 +38,7 @@
                                             item.description }})</span>
                                 </div>
                                 <span class="menu-item-price" style="margin-left: auto; font-weight: 500;">{{ item.price
-                                    }}₺</span>
+                                }}₺</span>
                                 <button class="delete-btn" @click="deleteItem(cat.id, item)">Sil</button>
                             </li>
                         </ul>
@@ -55,10 +55,6 @@ export default {
     name: 'MenuEditPage',
     props: {
         onAddItem: {
-            type: Function,
-            required: true
-        },
-        onDeleteItem: {
             type: Function,
             required: true
         }
@@ -86,10 +82,9 @@ export default {
             }
             try {
                 const sessionId = localStorage.getItem('sessionId') || '';
-                const response = await fetch('http://localhost:8080/menu/remove', {
+                const response = await fetch(`http://localhost:8080/menu/remove?menuName=${encodeURIComponent(cat.name)}`, {
                     method: 'DELETE',
-                    headers: { 'X-Session-Id': sessionId },
-                    body: JSON.stringify({ name: cat.name })
+                    headers: { 'X-Session-Id': sessionId }
                 });
                 if (!response.ok) throw new Error('Kategori silinemedi');
                 await this.fetchCategories();
@@ -173,14 +168,26 @@ export default {
                     this.newCategory = '';
                     this.fetchCategories();
                     this.fetchMenu();
-                    alert('Ürün başarıyla eklendi!');
                 })
                 .catch(err => {
                     alert('Ürün eklenemedi: ' + (err.message || 'Sunucu hatası'));
                 });
         },
-        deleteItem(idx) {
-            this.onDeleteItem(idx);
+        async deleteItem(categoryId, item) {
+            // Sends DELETE to /menu/removeItem?id=ITEM_ID
+            try {
+                const sessionId = localStorage.getItem('sessionId') || '';
+                const response = await fetch(`http://localhost:8080/menu/removeItem?itemID=${item.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Session-Id': sessionId
+                    }
+                });
+                if (!response.ok) throw new Error('Ürün silinemedi');
+                await this.fetchMenu();
+            } catch (err) {
+                alert('Ürün silinemedi: ' + (err.message || 'Sunucu hatası'));
+            }
         }
 
     }

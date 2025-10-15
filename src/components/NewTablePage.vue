@@ -32,6 +32,7 @@
                         </div>
                     </div>
                     <div v-if="!emptyTables.length" class="state muted">Şu an boş masa yok.</div>
+                    <button class="add-table-btn inside-container" @click="addNewTable">Masa Ekle</button>
                 </div>
             </div>
         </div>
@@ -54,6 +55,40 @@ export default {
         },
     },
     methods: {
+        async addNewTable() {
+            // Önce tüm masaları çek, en büyük id'yi bul, bir fazlasını ekle
+            const sessionId = this.getCleanSessionId();
+            let nextNum = 1;
+            try {
+                const allResp = await fetch('http://localhost:8080/table/getAll', {
+                    method: 'GET',
+                    headers: { 'X-Session-Id': sessionId }
+                });
+                if (!allResp.ok) throw new Error('Tüm masalar alınamadı');
+                const allData = await allResp.json();
+                // allData: [1,2,3] veya [{id:1},...]
+                let allIds = Array.isArray(allData)
+                    ? (typeof allData[0] === 'number'
+                        ? allData
+                        : (allData[0] && typeof allData[0] === 'object' && 'id' in allData[0])
+                            ? allData.map(t => Number(t.id))
+                            : [])
+                    : [];
+                if (allIds.length) {
+                    const maxId = Math.max(...allIds.map(id => Number(id) || 0));
+                    nextNum = maxId + 1;
+                }
+                const tableName = `table${nextNum}`;
+                const resp = await fetch(`http://localhost:8080/table/add?number=${encodeURIComponent(tableName)}&areaID=1`, {
+                    method: 'POST',
+                    headers: { 'X-Session-Id': sessionId }
+                });
+                if (!resp.ok) throw new Error('Masa eklenemedi');
+                await this.fetchEmptyTables();
+            } catch (e) {
+                this.error = 'Masa eklenemedi.';
+            }
+        },
         // localStorage -> header için güvenli hale getir
         getCleanSessionId() {
             const raw = localStorage.getItem('sessionId') || '';
@@ -119,34 +154,71 @@ export default {
 </script>
 
 <style scoped>
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
+/* Floating add table button */
+.add-table-btn {
+    position: fixed;
+    right: 32px;
+    bottom: 32px;
+    background: var(--primary, #2e5d3a);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 16px 32px;
+    font-size: 1.15rem;
+    font-weight: 600;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    z-index: 100;
+    transition: background .2s;
 }
 
-.page-wrapper {
-    min-height: 100dvh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--background);
-    padding: 24px;
+.add-table-btn.inside-container {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    background: var(--primary, #2e5d3a);
+    color: #fff;
+    border: none;
+    border-radius: 32px;
+    padding: 10px 22px;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    z-index: 10;
+    transition: background .2s;
 }
 
-.login-container {
-    width: 100%;
-    display: grid;
-    place-items: center;
-    padding-inline: 8px;
+.add-table-btn.inside-container:hover {
+    background: var(--primary-dark, #1e3d25);
 }
 
 .page-container {
     position: relative;
-    min-width: 330px;
-    max-width: 640px;
-    min-height: 250px;
+}
+
+.login-container {
+    width: 100vw;
+    height: 80vh;
+    max-height: 76vh;
+    /* 2x56px banner */
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.page-container {
+    position: relative;
+    width: 88vw;
+    max-width: 540px;
+    height: 72vh;
+    min-height: 320px;
     margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    height: 100%;
     background: var(--surface, #fff);
     border: 1px solid var(--border, #e6e6e6);
     border-radius: 24px;
@@ -200,9 +272,12 @@ export default {
 
 .list {
     width: 100%;
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     gap: 16px;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 .item {
@@ -250,8 +325,21 @@ export default {
 }
 
 @media (max-width:480px) {
+    .login-container {
+        height: calc(80vh - 64px);
+        min-height: 0;
+        padding: 0;
+    }
+
     .page-container {
-        padding: 24px 12px 16px;
+        padding: 8px 1vw 6px;
+        width: 99vw;
+        max-width: 100vw;
+        height: 100%;
+        min-height: 220px;
+        margin: 0 auto;
+        margin-top: 8px;
+        margin-bottom: 8px;
     }
 }
 </style>

@@ -30,6 +30,8 @@
                     </li>
                 </ul>
                 <div v-if="!groupedOrders.length" class="no-orders">Sipariş yok</div>
+                <button v-if="groupedOrders.length" class="add-btn" style="margin-top:12px;width:100%;font-size:1.1rem;"
+                    @click="sendOrdersToBackend">Sipariş Geç</button>
             </div>
 
             <!-- Menü -->
@@ -91,6 +93,29 @@ export default {
         },
     },
     methods: {
+        async sendOrdersToBackend() {
+            // Sends current orders for this table to backend
+            const tid = Number(this.tableId);
+            if (Number.isNaN(tid) || !this.ordersByTable[tid] || !this.ordersByTable[tid].length) {
+                alert('Gönderilecek ürün yok.');
+                return;
+            }
+            const sessionId = localStorage.getItem('sessionId') || '';
+            try {
+                const response = await fetch(`http://localhost:8080/table/order?tableID=${tid}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Session-Id': sessionId,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(this.ordersByTable[tid])
+                });
+                if (!response.ok) throw new Error('Sipariş gönderilemedi');
+                alert('Sipariş başarıyla gönderildi!');
+            } catch (err) {
+                alert('Sipariş gönderilemedi: ' + (err.message || 'Sunucu hatası'));
+            }
+        },
         async fetchMenu() {
             try {
                 const sessionId = localStorage.getItem('sessionId') || '';
@@ -109,8 +134,25 @@ export default {
             const tid = Number(this.tableId);
             if (Number.isNaN(tid)) return;
 
+            // Find the full item object from mainMenu and clone it
+            let foundItem = null;
+            if (this.mainMenu && this.mainMenu.subMenus) {
+                for (const cat of this.mainMenu.subMenus) {
+                    const item = cat.items.find(i => i.name === name && i.price === price);
+                    if (item) {
+                        // Deep copy to avoid reference bugs
+                        foundItem = JSON.parse(JSON.stringify(item));
+                        break;
+                    }
+                }
+            }
+            if (!foundItem) {
+                // fallback: at least send name/price
+                foundItem = { name, price };
+            }
+
             const nextList = this.ordersByTable[tid] ? [...this.ordersByTable[tid]] : [];
-            nextList.push({ name, price });
+            nextList.push(foundItem);
 
             this.ordersByTable = { ...this.ordersByTable, [tid]: nextList };
             this.saveOrders();
@@ -219,8 +261,8 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
-    padding: 6px 0;
+    gap: clamp(12px, 2.6vw, 16px);
+    padding: clamp(8px, 1.8vw, 14px) 0;
     border-bottom: 1px solid #ececec;
 }
 
@@ -302,15 +344,15 @@ export default {
 .menu-list li {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 8px 0;
+    gap: clamp(12px, 2.6vw, 16px);
+    padding: clamp(8px, 1.8vw, 14px) 0;
     border-bottom: 1px solid #ececec;
 }
 
 .menu-item-info {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: clamp(12px, 2.6vw, 16px);
     min-width: 0;
 }
 
