@@ -112,6 +112,11 @@ export default {
         },
     },
     methods: {
+        // localStorage -> header için güvenli hale getir
+        getCleanSessionId() {
+            const raw = localStorage.getItem('sessionId') || '';
+            return raw.replace(/(^"|"$)/g, '').trim();
+        },
         loadOrders() {
             const saved = localStorage.getItem('ordersByTable');
             if (saved) this.ordersByTable = JSON.parse(saved);
@@ -146,7 +151,7 @@ export default {
         },
 
         // Seçili adedi düşerek ödeme yap
-        paySelected() {
+        async paySelected() {
             const tid = Number(this.tableId);
             if (Number.isNaN(tid)) return;
 
@@ -161,29 +166,77 @@ export default {
             const totalQty = Object.values(toPayMap).reduce((a, b) => a + b, 0);
             if (totalQty === 0) return;
 
-            // Mevcut siparişlerden, her isim için belirtilen adet kadarını kaldır
-            const list = [...this.currentOrders]; // mevcut liste kopyası
-            const result = [];
-            const consumed = {}; // ad -> kaç tane düşüldü
-
-            for (const item of list) {
-                const want = toPayMap[item.name] || 0;
-                const used = consumed[item.name] || 0;
-                if (want > 0 && used < want) {
-                    consumed[item.name] = used + 1; // bu öğeyi düş
-                    continue;
+            // Build array of product objects in required format (one object per unit)
+            const selectedProducts = [];
+            for (const [name, qty] of Object.entries(toPayMap)) {
+                // find a prototype item in currentOrders with full fields
+                const proto = this.currentOrders.find(it => it.name === name) || {};
+                for (let i = 0; i < qty; i++) {
+                    selectedProducts.push({
+                        id: proto.id ?? null,
+                        name: proto.name ?? name,
+                        description: proto.description ?? '',
+                        price: proto.price ?? 0,
+                        path: proto.path ?? ''
+                    });
                 }
-                result.push(item); // listede kalmaya devam
             }
 
-            // Immutable atama -> reaktivite
-            this.ordersByTable = { ...this.ordersByTable, [tid]: result };
-            this.saveOrders();
+            // send to backend first
+            const sessionId = this.getCleanSessionId();
+            try {
+                // Call the canonical backend endpoint exactly as requested
+                let resp = null;
+                try {
+                    resp = await fetch(`http://localhost:8080/table/payment?tableID=${encodeURIComponent(tid)}`, {
+                        method: 'PUT',
+                        headers: {
+                            'X-Session-Id': sessionId,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(selectedProducts)
+                    });
+                } catch (e) {
+                    console.error('Network error when calling /table/payment', e);
+                    alert('Sunucuya bağlanılamadı.');
+                    return;
+                }
 
-            // Seçimleri sıfırla
-            this.selectedQuantities = {};
-            // İstersen otomatik geri dön: yorum satırını kaldır
-            // this.$router.go(-1);
+                if (!resp.ok) {
+                    // if method not allowed, show backend response to help debugging
+                    let bodyText = '';
+                    try { bodyText = await resp.text(); } catch (_) { bodyText = ''; }
+                    alert(`Ödeme işlemi başarısız. Sunucu cevap: ${resp.status} ${resp.statusText}\n\n${bodyText}`);
+                    return;
+                }
+
+                // On success, remove items locally (same logic as before)
+                const list = [...this.currentOrders]; // mevcut liste kopyası
+                const result = [];
+                const consumed = {}; // ad -> kaç tane düşüldü
+
+                for (const item of list) {
+                    const want = toPayMap[item.name] || 0;
+                    const used = consumed[item.name] || 0;
+                    if (want > 0 && used < want) {
+                        consumed[item.name] = used + 1; // bu öğeyi düş
+                        continue;
+                    }
+                    result.push(item); // listede kalmaya devam
+                }
+
+                // Immutable atama -> reaktivite
+                this.ordersByTable = { ...this.ordersByTable, [tid]: result };
+                this.saveOrders();
+
+                // Seçimleri sıfırla
+                this.selectedQuantities = {};
+
+            } catch (e) {
+                console.error(e);
+                alert('Ödeme sırasında hata oluştu.');
+            }
         },
     },
     mounted() {

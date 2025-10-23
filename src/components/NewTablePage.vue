@@ -23,20 +23,27 @@
 
                 <!-- Liste -->
                 <div v-else class="list">
-                    <div v-for="table in emptyTables" :key="table.id" class="item"
-                        @click="$router.push({ name: 'add-order', params: { tableId: table.id } })"
-                        style="cursor:pointer;">
-                        <div class="item-info">
+                    <div v-for="table in emptyTables" :key="table.id" class="item">
+                        <div class="item-info"
+                            @click="$router.push({ name: 'add-order', params: { tableId: table.id } })"
+                            style="cursor:pointer;">
                             <span class="item-name">Masa {{ table.id }}</span>
                             <span class="item-status">Boş</span>
                         </div>
+                        <div class="item-actions">
+                            <button class="delete-btn" @click="deleteTable(table.id)" aria-label="Masa sil">Sil</button>
+                        </div>
                     </div>
                     <div v-if="!emptyTables.length" class="state muted">Şu an boş masa yok.</div>
-                    <button class="add-table-btn inside-container" @click="addNewTable">Masa Ekle</button>
                 </div>
+            </div> <!-- .page-container -->
+
+            <!-- Masa Ekle container hemen altı -->
+            <div class="add-table-row">
+                <button class="add-table-btn" @click="addNewTable">Masa Ekle</button>
             </div>
-        </div>
-    </div>
+        </div> <!-- .login-container -->
+    </div> <!-- .page-wrapper -->
 </template>
 
 <script>
@@ -66,14 +73,32 @@ export default {
                 });
                 if (!allResp.ok) throw new Error('Tüm masalar alınamadı');
                 const allData = await allResp.json();
-                // allData: [1,2,3] veya [{id:1},...]
-                let allIds = Array.isArray(allData)
-                    ? (typeof allData[0] === 'number'
-                        ? allData
-                        : (allData[0] && typeof allData[0] === 'object' && 'id' in allData[0])
-                            ? allData.map(t => Number(t.id))
-                            : [])
-                    : [];
+                // Normalize allData to numeric ids. Support formats:
+                // - [1,2,3]
+                // - [{id:1}, ...]
+                // - ['table1','table2'] or [{id: 'table12'}, ...]
+                const parseNumericId = v => {
+                    if (v == null) return null;
+                    if (typeof v === 'number' && Number.isFinite(v)) return Number(v);
+                    if (typeof v === 'string') {
+                        // try pure number
+                        if (/^\d+$/.test(v)) return Number(v);
+                        // try pattern like 'table12' or 'Table-12'
+                        const m = v.match(/(\d+)$/);
+                        return m ? Number(m[1]) : null;
+                    }
+                    if (typeof v === 'object') {
+                        // object may have id property
+                        const idVal = v.id ?? v.ID ?? v.name ?? null;
+                        return parseNumericId(idVal);
+                    }
+                    return null;
+                };
+
+                let allIds = [];
+                if (Array.isArray(allData)) {
+                    allIds = allData.map(item => parseNumericId(item)).filter(n => n != null);
+                }
                 if (allIds.length) {
                     const maxId = Math.max(...allIds.map(id => Number(id) || 0));
                     nextNum = maxId + 1;
@@ -132,18 +157,52 @@ export default {
                 }
 
                 const data = await resp.json();
-                // [1,2,3] veya [{id:1},...] normalize
-                this.emptyTables = Array.isArray(data)
-                    ? (typeof data[0] === 'number'
-                        ? data.map(id => ({ id }))
-                        : (data[0] && typeof data[0] === 'object' && 'id' in data[0])
-                            ? data.map(t => ({ id: t.id }))
-                            : [])
-                    : [];
+                // Normalize response into objects with numeric `id` and keep sorted order
+                const parseNumericId = v => {
+                    if (v == null) return null;
+                    if (typeof v === 'number' && Number.isFinite(v)) return Number(v);
+                    if (typeof v === 'string') {
+                        if (/^\d+$/.test(v)) return Number(v);
+                        const m = v.match(/(\d+)$/);
+                        return m ? Number(m[1]) : null;
+                    }
+                    if (typeof v === 'object') {
+                        const idVal = v.id ?? v.ID ?? v.name ?? null;
+                        return parseNumericId(idVal);
+                    }
+                    return null;
+                };
+
+                if (!Array.isArray(data)) {
+                    this.emptyTables = [];
+                } else {
+                    const normalized = data
+                        .map(item => {
+                            const num = parseNumericId(item);
+                            return num == null ? null : { id: num, raw: item };
+                        })
+                        .filter(Boolean)
+                        .sort((a, b) => a.id - b.id);
+                    this.emptyTables = normalized;
+                }
             } catch (e) {
                 this.error = 'Sunucuya bağlanılamadı.';
             } finally {
                 this.loading = false;
+            }
+        },
+        async deleteTable(tableId) {
+            if (!confirm(`Masa ${tableId} silinsin mi?`)) return;
+            try {
+                const sessionId = this.getCleanSessionId();
+                const resp = await fetch(`http://localhost:8080/table/remove?tableId=${encodeURIComponent(tableId)}`, {
+                    method: 'DELETE',
+                    headers: { 'X-Session-Id': sessionId }
+                });
+                if (!resp.ok) throw new Error('Masa silinemedi');
+                await this.fetchEmptyTables();
+            } catch (e) {
+                alert('Masa silinirken hata oluştu.');
             }
         },
     },
@@ -288,6 +347,29 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+.item-actions {
+    width: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn {
+    background: transparent;
+    border: 1px solid rgba(200, 40, 40, 0.12);
+    color: #c62828;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.add-table-row {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 12px;
 }
 
 .item-info {
