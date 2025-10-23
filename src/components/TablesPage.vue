@@ -39,10 +39,6 @@ export default {
     props: {
         tables: {
             type: Array,
-<<<<<<< HEAD
-            required: true
-        }
-=======
             required: false,
             default: null
         }
