@@ -36,12 +36,13 @@
                     </div>
                     <div v-if="!emptyTables.length" class="state muted">Şu an boş masa yok.</div>
                 </div>
+                <div class="add-table-row">
+                    <button class="add-table-btn" @click="addNewTable">Masa Ekle</button>
+                </div>
             </div> <!-- .page-container -->
 
             <!-- Masa Ekle container hemen altı -->
-            <div class="add-table-row">
-                <button class="add-table-btn" @click="addNewTable">Masa Ekle</button>
-            </div>
+
         </div> <!-- .login-container -->
     </div> <!-- .page-wrapper -->
 </template>
