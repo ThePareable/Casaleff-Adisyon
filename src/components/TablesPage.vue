@@ -14,7 +14,11 @@
                 <img src="../assets/logo.png" alt="Logo" class="login-logo" />
 
                 <!-- Liste -->
-                <div class="tables-list">
+                <div v-if="loading" style="text-align:center; margin: 32px 0; color: #888;">Yükleniyor...</div>
+                <div v-else-if="error" style="text-align:center; margin: 32px 0; color: #d32f2f;">{{ error }}</div>
+                <div v-else class="tables-list">
+                    <div v-if="!openTables.length" style="text-align:center; color:#888; padding:32px 0;">Açık masa yok.
+                    </div>
                     <div v-for="table in openTables" :key="table.id" class="table-card"
                         @click="$router.push({ name: 'add-order', params: { tableId: table.id } })"
                         style="cursor:pointer;">
@@ -35,14 +39,51 @@ export default {
     props: {
         tables: {
             type: Array,
+<<<<<<< HEAD
             required: true
         }
+=======
+            required: false,
+            default: null
+        }
+    },
+    data() {
+        return {
+            localTables: [],
+            loading: false,
+            error: ''
+        };
+>>>>>>> bugramuhci
     },
     computed: {
         openTables() {
-            return this.tables.filter(t => t.hasOrder);
+            const source = this.tables && this.tables.length ? this.tables : this.localTables;
+            // Sadece orders dizisi dolu olan masalar
+            return source.filter(t => Array.isArray(t.orders) && t.orders.length > 0);
         },
     },
+    async mounted() {
+        if (!this.tables || !this.tables.length) {
+            this.loading = true;
+            try {
+                const sessionId = localStorage.getItem('sessionId') || '';
+                const response = await fetch('http://localhost:8080/table/getFull', {
+                    method: 'GET',
+                    headers: { 'X-Session-Id': sessionId }
+                });
+                if (!response.ok) throw new Error('Masa listesi alınamadı');
+                const data = await response.json();
+                // Sadece boş olmayan masaları al
+                this.localTables = Array.isArray(data)
+                    ? data.filter(t => Array.isArray(t.orders) && t.orders.length > 0)
+                    : [];
+            } catch (err) {
+                this.error = err.message || 'Sunucu hatası';
+            } finally {
+                this.loading = false;
+            }
+        }
+    }
 };
 </script>
 

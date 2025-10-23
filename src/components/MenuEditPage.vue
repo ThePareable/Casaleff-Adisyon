@@ -38,7 +38,11 @@
                                             item.description }})</span>
                                 </div>
                                 <span class="menu-item-price" style="margin-left: auto; font-weight: 500;">{{ item.price
+<<<<<<< HEAD
                                     }}₺</span>
+=======
+                                }}₺</span>
+>>>>>>> bugramuhci
                                 <button class="delete-btn" @click="deleteItem(cat.id, item)">Sil</button>
                             </li>
                         </ul>
@@ -57,10 +61,13 @@ export default {
         onAddItem: {
             type: Function,
             required: true
+<<<<<<< HEAD
         },
         onDeleteItem: {
             type: Function,
             required: true
+=======
+>>>>>>> bugramuhci
         }
     },
     data() {
@@ -86,10 +93,16 @@ export default {
             }
             try {
                 const sessionId = localStorage.getItem('sessionId') || '';
+<<<<<<< HEAD
                 const response = await fetch('http://localhost:8080/menu/remove', {
                     method: 'DELETE',
                     headers: { 'X-Session-Id': sessionId },
                     body: JSON.stringify({ name: cat.name })
+=======
+                const response = await fetch(`http://localhost:8080/menu/remove?menuName=${encodeURIComponent(cat.name)}`, {
+                    method: 'DELETE',
+                    headers: { 'X-Session-Id': sessionId }
+>>>>>>> bugramuhci
                 });
                 if (!response.ok) throw new Error('Kategori silinemedi');
                 await this.fetchCategories();
@@ -173,14 +186,35 @@ export default {
                     this.newCategory = '';
                     this.fetchCategories();
                     this.fetchMenu();
+<<<<<<< HEAD
                     alert('Ürün başarıyla eklendi!');
+=======
+>>>>>>> bugramuhci
                 })
                 .catch(err => {
                     alert('Ürün eklenemedi: ' + (err.message || 'Sunucu hatası'));
                 });
         },
+<<<<<<< HEAD
         deleteItem(idx) {
             this.onDeleteItem(idx);
+=======
+        async deleteItem(categoryId, item) {
+            // Sends DELETE to /menu/removeItem?id=ITEM_ID
+            try {
+                const sessionId = localStorage.getItem('sessionId') || '';
+                const response = await fetch(`http://localhost:8080/menu/removeItem?itemID=${item.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-Session-Id': sessionId
+                    }
+                });
+                if (!response.ok) throw new Error('Ürün silinemedi');
+                await this.fetchMenu();
+            } catch (err) {
+                alert('Ürün silinemedi: ' + (err.message || 'Sunucu hatası'));
+            }
+>>>>>>> bugramuhci
         }
 
     }
